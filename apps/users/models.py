@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from datetime import  datetime
+from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -26,22 +26,28 @@ class UserProfile(AbstractUser):
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length= 20, verbose_name=u"verification code")
     email = models.EmailField(max_length= 50, verbose_name= u"email adderess")
-    send_type = models.CharField(choices=(("register", u"registration"), ("forget", "forget it")), max_length=50)
+    send_type = models.CharField(choices=(("register", u"registration"), ("forget", "forget it")), max_length=50,
+                                 verbose_name=u"verification code type")
     send_time = models.DateTimeField(default= datetime.now)
 
     class Meta:
         verbose_name = "email verification code"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return '{} {}'.format(self.code, self.email)
+
 
 class Banner(models.Model):
     title = models.CharField(max_length= 100, verbose_name=u"title of image")
     image = models.ImageField(upload_to="banner/%Y/%m", verbose_name="banner image", max_length=100)
     url = models.CharField(max_length= 100, verbose_name= "url of the webpage")
-    index = models.IntegerField(default= 1000,verbose_name= 'index of the banner image')
+    index = models.IntegerField(default= 1000, verbose_name= 'index of the banner image')
     add_time = models.DateTimeField(default=datetime.now,verbose_name=u"time of added")
 
     class Meta:
         verbose_name = u"banner images"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return '{} {}'.format(self.title, self.image)

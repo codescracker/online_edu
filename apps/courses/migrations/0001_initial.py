@@ -42,7 +42,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=100, verbose_name='source name')),
                 ('download', models.FileField(upload_to='course/resource/%Y/%m')),
                 ('add_time', models.DateTimeField(default=datetime.datetime.now, verbose_name='time of source added')),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apps.courses.Course', verbose_name='course')),
+                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.Course', verbose_name='course')),
             ],
             options={
                 'verbose_name': 'course resource',
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100, verbose_name='lecture name')),
                 ('add_time', models.DateTimeField(default=datetime.datetime.now, verbose_name='time of lecture added')),
-                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apps.courses.Course', verbose_name='course')),
+                ('course', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.Course', verbose_name='course')),
             ],
             options={
                 'verbose_name': 'lecutre',
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=100, verbose_name='video name')),
                 ('add_time', models.DateTimeField(default=datetime.datetime.now, verbose_name='time of video added')),
-                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apps.courses.Lecture', verbose_name='lesson')),
+                ('lesson', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='courses.Lecture', verbose_name='lesson')),
             ],
             options={
                 'verbose_name': 'video',

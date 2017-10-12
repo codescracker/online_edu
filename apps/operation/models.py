@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from datetime import datetime
 
 from django.db import models
 
 
-from apps.users.models import UserProfile
-from apps.courses.models import Course
+from users.models import UserProfile
+from courses.models import Course
 
 
 # Create your models here.
@@ -23,6 +22,9 @@ class UserAsk(models.Model):
         verbose_name = u"user's ask"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return "{} ask {}".format(self.name, self.course_name)
+
 
 class CourseComments(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name=u'user')
@@ -33,6 +35,9 @@ class CourseComments(models.Model):
     class Meta:
         verbose_name = u"course comments"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return "{} comments {}".format(self.user, self.course)
 
 
 class UserFavorite(models.Model):
@@ -46,6 +51,9 @@ class UserFavorite(models.Model):
         verbose_name = u"user favorite"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return "{} {} {}".format(self.user, self.fav_id, self.fav_type)
+
 
 class UserMessage(models.Model):
     user_id = models.IntegerField(default=0, verbose_name=u"user who receive message") # 0 means all users
@@ -57,6 +65,9 @@ class UserMessage(models.Model):
         verbose_name = u"user message"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return self.user_id
+
 
 class UserCourse(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name=u"user")
@@ -66,3 +77,6 @@ class UserCourse(models.Model):
     class Meta:
         verbose_name = u"user course"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return "{} selects {}".format(self.user, self.course)

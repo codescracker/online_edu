@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('click_nums', models.IntegerField(default=0, verbose_name='number of clicks')),
                 ('like_nums', models.IntegerField(default=0, verbose_name='number of likes')),
                 ('address', models.CharField(max_length=100, verbose_name='address of the organizations')),
-                ('city', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apps.organizations.City', verbose_name='city')),
+                ('city', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='organizations.City', verbose_name='city')),
             ],
             options={
                 'verbose_name': 'organization',
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 ('click_nums', models.IntegerField(default=0, verbose_name='number of clicks for the teacher')),
                 ('like_nums', models.IntegerField(default=0, verbose_name='number of likes for the teacher')),
                 ('add_time', models.DateTimeField(default=datetime.datetime.now, verbose_name='time of teacher added')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='apps.organizations.Organizition', verbose_name='org name')),
+                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='organizations.Organizition', verbose_name='org name')),
             ],
             options={
                 'verbose_name': 'teacher',

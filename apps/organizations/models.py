@@ -16,6 +16,9 @@ class City(models.Model):
         verbose_name = u"city of organization"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return self.name
+
 
 class Organizition(models.Model):
     city = models.ForeignKey(City, verbose_name=u"city")
@@ -28,6 +31,9 @@ class Organizition(models.Model):
     class Meta:
         verbose_name = u"organization"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return "{} {]".format(self.city, self.name)
 
 
 class Teacher(models.Model):
@@ -44,3 +50,6 @@ class Teacher(models.Model):
     class Meta:
         verbose_name = u"teacher"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return "{} {]".format(self.organization, self.name)

@@ -27,15 +27,21 @@ class Course(models.Model):
         verbose_name = u"courses"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return self.name
+
 
 class Lecture(models.Model):
-    course = models.ForeignKey(Course,verbose_name=u"course")
-    name = models.CharField(max_length= 100, verbose_name=u"lecture name")
+    course = models.ForeignKey(Course, verbose_name=u"course")
+    name = models.CharField(max_length=100, verbose_name=u"lecture name")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"time of lecture added")
 
     class Meta:
         verbose_name = u"lecutre"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return "{} {}".format(self.course, self.name)
 
 
 class Video(models.Model):
@@ -46,6 +52,9 @@ class Video(models.Model):
     class Meta:
         verbose_name = u"video"
         verbose_name_plural = verbose_name
+
+    def __unicode__(self):
+        return "{} {}".format(self.lesson, self.name)
 
 
 class CourseRsource(models.Model):
@@ -58,3 +67,5 @@ class CourseRsource(models.Model):
         verbose_name = u"course resource"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return "{} {}".format(self.course, self.name)
