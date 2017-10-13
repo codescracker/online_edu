@@ -21,15 +21,27 @@ def send_register_email(email, send_type='register'):
     email_body = ''
 
     if send_type == 'register':
+        print 'email type is register'
         email_title = 'Online Edu activation link'
-        email_body = "Please click the link below to activate your account http:/127.0.0.1/8000/active/{}".format(code)
+        email_body = "Please click the link below to activate your account \n http:/127.0.0.1:8000/active/{}".format(code)
 
         send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
+        print "email status "+ str(send_status)
+        if send_status:
+            pass
+    else:
+        print 'email type is forget'
+        email_title = 'Online Edu reset password link'
+        email_body = "Please click the link below to reset your password \n http:/127.0.0.1:8000/reset/{}".format(code)
+
+        send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
+        print "email status "+ str(send_status)
+        print " The code is {}".format(code)
         if send_status:
             pass
 
 
-def generate_verificationcode(codelength = 8):
+def generate_verificationcode(codelength=8):
     code_list = []
     pool = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890"
     pool_length = len(pool)
