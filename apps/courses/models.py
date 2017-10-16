@@ -19,7 +19,8 @@ class Course(models.Model):
     learn_time = models.IntegerField(default=0, verbose_name=u"length of the course")
     students = models.IntegerField(default=0, verbose_name="number of student")
     like_nums = models.IntegerField(default=0, verbose_name="number of likes")
-    image = models.ImageField(upload_to="courses/%Y/%m", verbose_name=u"cover image", max_length= 100)
+    image = models.ImageField(upload_to="courses/%Y/%m", verbose_name=u"cover image", max_length= 100,
+                              default='courses/%Y/%m/default.jpg')
     click_nums = models.IntegerField(default=0, verbose_name=u"number of click")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"time of creation of course")
 

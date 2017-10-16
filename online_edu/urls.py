@@ -16,11 +16,13 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import TemplateView
-
+from django.views.static import serve
 import xadmin
 
 from users.views import user_login
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ActiveResetView, PassWordResetView
+from organizations.views import OrgView
+from settings import MEDIA_ROOT
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -35,5 +37,10 @@ urlpatterns = [
     url(r'^forgetpwd', ForgetPwdView.as_view(), name= "forgetpsd"),
     url(r'^reset/(?P<active_code>.*)/$', ActiveResetView.as_view(), name = 'resetpwd'),
     url(r'^modifypwd', PassWordResetView.as_view(), name='modifypwd'),
+    url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
+    # url(r'^org-list/$', OrgView.as_view(), name='org_list'),
+
+    # ulrs for the organization app
+    url(r'^org/', include('organizations.urls', namespace='org'))
 ]

@@ -27,13 +27,24 @@ class Organizition(models.Model):
     click_nums = models.IntegerField(default=0, verbose_name=u"number of clicks")
     like_nums = models.IntegerField(default=0, verbose_name=u"number of likes")
     address = models.CharField(max_length=100, verbose_name=u"address of the organizations")
+    img = models.ImageField(upload_to="organizations/%Y/%m", verbose_name=u"organization image", max_length=100,
+                            default='organizations/%Y/%m/default.jpg')
+    add_time = models.DateTimeField(default=datetime.now, verbose_name='time of organization added')
+    category = models.CharField(max_length=50,
+                                choices=(('Education Organization', 'training org'),
+                                                        ('Individual', 'person'),
+                                                        ('College', 'higher education')),
+                                verbose_name='Org type',
+                                default='Individual')
+    student_num = models.IntegerField(default=0, verbose_name=u"number of students")
+    course_num = models.IntegerField(default=0, verbose_name=u"number of courses")
 
     class Meta:
         verbose_name = u"organization"
         verbose_name_plural = verbose_name
 
     def __unicode__(self):
-        return "{} {]".format(self.city, self.name)
+        return "{} {}".format(self.city, self.name)
 
 
 class Teacher(models.Model):
