@@ -43,4 +43,5 @@ urlpatterns = [
 
     # ulrs for the organization app
     url(r'^org/', include('organizations.urls', namespace='org'))
+
 ]

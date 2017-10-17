@@ -4,18 +4,21 @@ from datetime import datetime
 
 from django.db import models
 
+
+from organizations.models import Organizition
 # Create your models here.
 
 
 class Course(models.Model):
+    organization = models.ForeignKey(Organizition, blank=True, null= True, verbose_name= 'course related organization')
     name = models.CharField(max_length=50, verbose_name=u"name of the course")
     desc = models.CharField(max_length=200, verbose_name=u"description of the course")
     detail = models.TextField(verbose_name=u"detail of the course")
     degree = models.CharField(max_length=20,
                               choices=(("Easy", "easy level course"),
-                                        ("Medium", "medium level course"),
-                                        ("Hard", "hard level of course")),
-                            verbose_name= u"difficulty level of degree")
+                                       ("Medium", "medium level course"),
+                                       ("Hard", "hard level of course")),
+                              verbose_name=u"difficulty level of degree")
     learn_time = models.IntegerField(default=0, verbose_name=u"length of the course")
     students = models.IntegerField(default=0, verbose_name="number of student")
     like_nums = models.IntegerField(default=0, verbose_name="number of likes")

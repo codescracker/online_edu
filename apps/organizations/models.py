@@ -57,10 +57,12 @@ class Teacher(models.Model):
     click_nums = models.IntegerField(default=0, verbose_name=u"number of clicks for the teacher")
     like_nums = models.IntegerField(default=0, verbose_name=u"number of likes for the teacher")
     add_time = models.DateTimeField(default=datetime.now, verbose_name='time of teacher added')
+    img = models.ImageField(upload_to="teachers/%Y/%m", verbose_name=u"teacher image", max_length=100,
+                            default='teachers/%Y/%m/default.jpg')
 
     class Meta:
         verbose_name = u"teacher"
         verbose_name_plural = verbose_name
 
     def __unicode__(self):
-        return "{} {]".format(self.organization, self.name)
+        return "{} {}".format(self.organization, self.name)
