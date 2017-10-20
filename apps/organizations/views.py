@@ -128,7 +128,7 @@ class UserFavView(View):
         fav_type = int(request.POST.get('fav_type', 0))
 
         if not request.user.is_authenticated():
-            response_data = {}
+            response_data = dict()
             response_data['status'] = 'fail'
             response_data['msg'] = 'user not log in'
             print 'user not log in'
@@ -140,7 +140,7 @@ class UserFavView(View):
             if exist_record:
                 exist_record.delete()
 
-                response_data = {}
+                response_data = dict()
                 response_data['status'] = 'success'
                 response_data['msg'] = 'save'
                 return HttpResponse(json.dumps(response_data), content_type='application/json')
@@ -152,13 +152,13 @@ class UserFavView(View):
                     user_fav.fav_type = fav_type
                     user_fav.save()
 
-                    response_data = {}
+                    response_data = dict()
                     response_data['status'] = 'success'
                     response_data['msg'] = 'saved'
 
                     return HttpResponse(json.dumps(response_data), content_type='application/json')
                 else:
-                    response_data = {}
+                    response_data = dict()
                     response_data['status'] = 'fail'
                     response_data['msg'] = 'save error'
 

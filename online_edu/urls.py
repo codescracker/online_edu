@@ -42,6 +42,8 @@ urlpatterns = [
     # url(r'^org-list/$', OrgView.as_view(), name='org_list'),
 
     # ulrs for the organization app
-    url(r'^org/', include('organizations.urls', namespace='org'))
+    url(r'^org/', include('organizations.urls', namespace='org')),
+
+    url(r'^course/', include('courses.urls', namespace='course')),
 
 ]
