@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.http import HttpResponse
+from django.db.models import Q
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
@@ -18,6 +19,12 @@ class CourseView(View):
         all_courses = Course.objects.all().order_by('-add_time')
 
         hot_courses = Course.objects.all().order_by('-click_nums')[:3]
+
+        search_keyword = request.GET.get('keywords', '')
+        if search_keyword:
+            all_courses = all_courses.filter(Q(name__icontains=search_keyword) |
+                                             Q(desc__icontains=search_keyword) |
+                                             Q(detail__icontains=search_keyword))
 
         order = request.GET.get('sort', '')
         if order:

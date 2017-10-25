@@ -91,9 +91,9 @@ $(function(){
             async: true,
             success: function(data) {
                 if(data.password1){
-                    Dml.fun.showValidateError($("#pwd"), data.password1);
+                    Dml.fun.showValidateError($("#pwd"), data.newpwd);
                 }else if(data.password2){
-                    Dml.fun.showValidateError($("#repwd"), data.password2);
+                    Dml.fun.showValidateError($("#repwd"), data.cfmpwd);
                 }else if(data.status == "success"){
                     Dml.fun.showTipsDialog({
                         title:'提交成功',

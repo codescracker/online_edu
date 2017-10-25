@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django import forms
+from .models import UserProfile
 
 from captcha.fields import CaptchaField
 
@@ -25,3 +26,9 @@ class RegisterForm(forms.Form):
     password = forms.CharField(required=True, min_length=5)
     captcha = CaptchaField(required=True)
 
+
+class ImageForm(forms.ModelForm):
+
+    class Meta:
+        model = UserProfile
+        fields = ['image']

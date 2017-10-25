@@ -59,6 +59,7 @@ class Teacher(models.Model):
     add_time = models.DateTimeField(default=datetime.now, verbose_name='time of teacher added')
     img = models.ImageField(upload_to="teachers/%Y/%m", verbose_name=u"teacher image", max_length=100,
                             default='teachers/%Y/%m/default.jpg')
+    age = models.IntegerField(default=23, verbose_name=u"age of the teacher")
 
     class Meta:
         verbose_name = u"teacher"

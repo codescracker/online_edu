@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.views.generic.base import View
 from django.http import HttpResponse
+from django.db.models import Q
 
 
-from .models import Organizition, City
+from .models import Organizition, City, Teacher
 from .forms import UserAskForm
 from operation.models import UserFavorite
 
@@ -20,6 +21,11 @@ class OrgView(View):
         all_cities = City.objects.all()
 
         hot_orgs = all_orgs.order_by('-click_nums')[:5]
+
+        search_keyword = request.GET.get('keywords', '')
+        if search_keyword:
+            all_orgs = all_orgs.filter(Q(name__icontains=search_keyword) |
+                                       Q(desc__icontains=search_keyword))
 
         city_id = request.GET.get('city', '')
         org_ct = request.GET.get('ct', '')
@@ -163,6 +169,78 @@ class UserFavView(View):
                     response_data['msg'] = 'save error'
 
                     return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+
+class TeacherListView(View):
+    def get(self, request):
+        all_teachers = Teacher.objects.all()
+        teachers_rank = Teacher.objects.all().order_by('-click_nums')[:4]
+
+        search_keyword = request.GET.get('keywords', '')
+        if search_keyword:
+            all_teachers = all_teachers.filter(Q(name__icontains=search_keyword) |
+                                               Q(work_company__icontains=search_keyword) |
+                                               Q(work_position__icontains=search_keyword))
+
+        sort = request.GET.get('sort', '')
+        if sort:
+            print sort
+            all_teachers = all_teachers.order_by('-'+sort)
+
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        p = Paginator(all_teachers, 3, request=request)
+
+        teachers = p.page(page)
+        data = dict()
+        data['teachers'] = teachers
+        data['order'] = sort
+        data['teachers_rank'] = teachers_rank
+        data['teachers_count'] = all_teachers.count()
+        return render(request, 'teachers-list.html', data)
+
+
+class TeacherDetailView(View):
+    def get(self, request, teacher_id):
+        teacher = Teacher.objects.get(id=int(teacher_id))
+        all_courses = teacher.course_set.all()
+        org = teacher.organization
+        teachers_rank = Teacher.objects.all().order_by('-click_nums')[:4]
+
+        is_teacher_saved = False
+        is_org_saved = False
+        if request.user.is_authenticated():
+            if UserFavorite.objects.filter(fav_id=teacher_id, fav_type=3, user=request.user):
+                is_teacher_saved = True
+            if UserFavorite.objects.filter(fav_id=org.id, fav_type=2, user=request.user):
+                is_org_saved = True
+
+        data = dict()
+        data['teacher'] = teacher
+        data['all_courses'] = all_courses
+        data['org'] = org
+        data['hot_teachers'] = teachers_rank
+        data['is_teacher_saved'] = is_teacher_saved
+        data['is_org_saved'] = is_org_saved
+        return render(request, 'teacher-detail.html', data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 
 from organizations.views import OrgView, UserAskView, OrgDetailHomeView, OrgDetailCourseView, OrgDetailTeacherView, \
-    OrgDetailIntroView, UserFavView
+    OrgDetailIntroView, UserFavView, TeacherListView, TeacherDetailView
 
 urlpatterns = [
 
@@ -14,4 +14,6 @@ urlpatterns = [
 
     url(r'^add_fav/$', UserFavView.as_view(), name='add_fav'),
 
+    url(r'^teacher_list/$', TeacherListView.as_view(), name='teacher_list'),
+    url(r'^teacher_detail/(?P<teacher_id>\d+)/$', TeacherDetailView.as_view(), name='teacher_detail'),
 ]

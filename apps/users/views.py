@@ -4,11 +4,14 @@ from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
+from django.http import HttpResponse
 
 from .models import UserProfile, EmailVerifyRecord
-from .forms import LoginForm, RegisterForm, ForgetPsdForm, ResetpwdForm
+from .forms import LoginForm, RegisterForm, ForgetPsdForm, ResetpwdForm, ImageForm
 from utls.email_send import send_register_email
 
+
+import json
 # Create your views here.
 
 
@@ -31,21 +34,21 @@ class PassWordResetView(View):
             confirm_pwd = request.POST.get('password2')
             if new_pwd == confirm_pwd:
                 user = UserProfile.objects.get(email=email)
-                user.password = new_pwd
+                user.password = make_password(new_pwd)
                 user.save()
                 return render(request, "password_reset.html", {'msg': 'new passwrod is set, please log in',
                                                                "reset": reset_form,
-                                                               "isfinish": True,
+                                                               "isfinish": 'Yes',
                                                                "email": email})
             else:
                 return render(request, "password_reset.html", {'msg': 'Please check the new password',
                                                                "reset": reset_form,
-                                                               "isfinish": False,
+                                                               "isfinish": 'No',
                                                                 "email" : email})
         else:
             return render(request, "password_reset.html", {'msg': 'Please input required format of password',
                                                            "reset": reset_form,
-                                                           "isfinish": False,
+                                                           "isfinish": 'No',
                                                            "email": email})
 
 
@@ -56,7 +59,7 @@ class ActiveResetView(View):
             for record in all_records:
                 if record.send_type == 'forget':
                     email = record.email
-                    return render(request, 'password_reset.html', {'email': email, "isfinish": False})
+                    return render(request, 'password_reset.html', {'email': email, "isfinish": 'No'})
         else:
             return render(request, 'wrong-activecode.html')
 
@@ -156,3 +159,53 @@ def user_login(request):
     elif request.method == "GET":
         return render(request, "login.html", {})
 
+
+class UserInfoView(View):
+    def get(self, request):
+        if not request.user.is_authenticated():
+            return render(request, 'login.html')
+
+        data = dict()
+        data['userprofile'] = request.user
+        return render(request, 'usercenter-info.html', data)
+
+
+class UserImageView(View):
+    def post(self, request):
+        image_form = ImageForm(request.POST, request.FILES)
+        if image_form.is_valid():
+            image = image_form.cleaned_data['image']
+            request.user.image = image
+            request.user.save()
+
+            response_data = dict()
+            response_data['status'] = 'success'
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
+        else:
+            response_data = dict()
+            response_data['status'] = 'fail'
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+
+class UserPwdUpdate(View):
+    def post(self, request):
+        update_form = ResetpwdForm(request.POST)
+        if update_form.is_valid():
+            newpwd = request.POST.get('newpwd')
+            cfmpwd = request.POST.get('cfmpwd')
+            if newpwd != cfmpwd:
+                response_data = dict()
+                response_data['status'] = 'fail'
+                response_data['msg'] = 'two passwords are not consistent'
+                return HttpResponse(json.dumps(response_data), content_type='application/json')
+            else:
+                request.user.password = make_password(newpwd)
+                request.user.save()
+                response_data = dict()
+                response_data['status'] = 'success'
+                return HttpResponse(json.dumps(response_data), content_type='application/json')
+        else:
+            response_data = dict()
+            response_data['status'] = 'fail'
+            response_data['msg'] = 'Please check the format of the passwords'
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
