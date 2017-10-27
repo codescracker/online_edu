@@ -7,10 +7,13 @@ from django.contrib.auth.hashers import make_password
 from django.http import HttpResponse
 
 from .models import UserProfile, EmailVerifyRecord
-from .forms import LoginForm, RegisterForm, ForgetPsdForm, ResetpwdForm, ImageForm
+from .forms import LoginForm, RegisterForm, ForgetPsdForm, ResetpwdForm, ImageForm, UserInfoForm
 from utls.email_send import send_register_email
+from operation.models import UserCourse, UserFavorite, UserMessage
+from organizations.models import Organizition, Teacher
+from courses.models import Course
 
-
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 import json
 # Create your views here.
 
@@ -114,10 +117,14 @@ class RegisterView(View):
             user_profile.is_active = False
             user_profile.save()
 
+            user_msg = UserMessage()
+            user_msg.user_id = user_profile.id
+            user_msg.message = "Welcome to the Online Edu"
+            user_msg.save()
+
             send_register_email(email, 'register')
             return render(request, "login.html")
         else:
-            print 'haha'
             return render(request, "register.html", {"register_form": register_form})
 
 
@@ -169,6 +176,19 @@ class UserInfoView(View):
         data['userprofile'] = request.user
         return render(request, 'usercenter-info.html', data)
 
+    def post(self, request):
+        if not request.user.is_authenticated():
+            return render(request, 'login.html')
+
+        user_info_form = UserInfoForm(request.POST, instance=request.user)
+        if user_info_form.is_valid():
+            user_info_form.save()
+            response_data = dict()
+            response_data['status'] = 'success'
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps(user_info_form.errors), content_type='application/json')
+
 
 class UserImageView(View):
     def post(self, request):
@@ -209,3 +229,118 @@ class UserPwdUpdate(View):
             response_data['status'] = 'fail'
             response_data['msg'] = 'Please check the format of the passwords'
             return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+
+class SendEmailCodeView(View):
+    def get(self, request):
+        if not request.user.is_authenticated():
+            return render(request, 'index.html')
+
+        email = request.GET.get('email', '')
+        print email
+        if UserProfile.objects.filter(email=email):
+            print 'exist'
+            response_data = dict()
+            response_data['email'] = 'The Email already exists'
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+        send_register_email(email, 'update')
+        response_data = dict()
+        response_data['status'] = 'success'
+        return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+
+class UpdateEmailView(View):
+    def post(self, request):
+        email = request.POST.get('email', '')
+        code = request.POST.get('code', '')
+
+        existed_verification_records = EmailVerifyRecord.objects.filter(email= email, code=code, send_type='update')
+
+        if existed_verification_records:
+            user = request.user
+            user.email = email
+            user.save()
+
+            response_data = dict()
+            response_data['status'] = 'success'
+
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+        else:
+            response_data = dict()
+            response_data['email'] = 'Please input correct verification codes'
+            return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+
+class MyCourseView(View):
+    def get(self, request):
+        user_courses = UserCourse.objects.filter(user=request.user)
+
+        data = dict()
+        data['user_courses'] = user_courses
+
+        return render(request, 'usercenter-mycourse.html', data)
+
+
+class MyFavOrgView(View):
+    def get(self, request):
+        fav_orgs = []
+        for user_fav in UserFavorite.objects.filter(user=request.user, fav_type=2):
+            fav_org_id = user_fav.fav_id
+            fav_org = Organizition.objects.get(id = fav_org_id)
+            fav_orgs.append(fav_org)
+
+        data = dict()
+        data['fav_orgs'] = fav_orgs
+
+        return render(request, 'usercenter-fav-org.html', data)
+
+
+class MyFavTeacherView(View):
+    def get(self, request):
+        fav_teachers = []
+        for user_fav in UserFavorite.objects.filter(user=request.user, fav_type=3):
+            fav_teacher_id = user_fav.fav_id
+            fav_teacher = Teacher.objects.get(id = fav_teacher_id)
+            fav_teachers.append(fav_teacher)
+
+        data = dict()
+        data['fav_teachers'] = fav_teachers
+
+        return render(request, 'usercenter-fav-teacher.html', data)
+
+
+class MyFavCourseView(View):
+    def get(self, request):
+        fav_courses = []
+        for user_fav in UserFavorite.objects.filter(user=request.user, fav_type=1):
+            fav_course_id = user_fav.fav_id
+            fav_course = Course.objects.get(id = fav_course_id)
+            fav_courses.append(fav_course)
+
+        data = dict()
+        data['fav_courses'] = fav_courses
+
+        return render(request, 'usercenter-fav-course.html', data)
+
+
+class MyMsgView(View):
+    def get(self, request):
+        user_id = request.user.id
+        all_msgs = UserMessage.objects.filter(user_id=user_id, has_read=False)
+
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        p = Paginator(all_msgs, 5, request=request)
+
+        msgs = p.page(page)
+
+        data = dict()
+        data['msgs'] = msgs
+
+        return render(request, 'usercenter-message.html', data)
+

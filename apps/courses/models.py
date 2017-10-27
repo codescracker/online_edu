@@ -28,6 +28,7 @@ class Course(models.Model):
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"time of creation of course")
     category = models.CharField(default='backend', max_length=50, verbose_name='category of the course')
     tag = models.CharField(default='', max_length=50, verbose_name='tag of the course')
+
     teacher = models.ForeignKey(Teacher, blank=True, null= True, verbose_name= 'course related teacher')
     prequist = models.CharField(default='', max_length=50, verbose_name='preqrust for the course')
     goal =  models.CharField(default='', max_length=50, verbose_name='goal of the course')

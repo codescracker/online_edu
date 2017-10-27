@@ -24,11 +24,13 @@ class UserProfile(AbstractUser):
 
 
 class EmailVerifyRecord(models.Model):
-    code = models.CharField(max_length= 20, verbose_name=u"verification code")
-    email = models.EmailField(max_length= 50, verbose_name= u"email adderess")
-    send_type = models.CharField(choices=(("register", u"registration"), ("forget", "forget it")), max_length=50,
-                                 verbose_name=u"verification code type")
-    send_time = models.DateTimeField(default= datetime.now)
+    code = models.CharField(max_length=20, verbose_name=u"verification code")
+    email = models.EmailField(max_length=50, verbose_name=u"email adderess")
+    send_type = models.CharField(
+        choices=(("register", u"register email "), ("forget", "forget email"), ("update", 'update email')),
+        max_length=50,
+        verbose_name=u"verification code type")
+    send_time = models.DateTimeField(default=datetime.now)
 
     class Meta:
         verbose_name = "email verification code"

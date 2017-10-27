@@ -29,10 +29,20 @@ def send_register_email(email, send_type='register'):
         print "email status "+ str(send_status)
         if send_status:
             pass
-    else:
+    elif send_type == 'forget':
         print 'email type is forget'
         email_title = 'Online Edu reset password link'
         email_body = "Please click the link below to reset your password \n http:/127.0.0.1:8000/reset/{}".format(code)
+
+        send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
+        print "email status "+ str(send_status)
+        print " The code is {}".format(code)
+        if send_status:
+            pass
+    elif send_type == 'update':
+        print 'email type is update'
+        email_title = 'Online Edu update email link'
+        email_body = "The verification codes are {}".format(code)
 
         send_status = send_mail(email_title, email_body, EMAIL_FROM, [email])
         print "email status "+ str(send_status)

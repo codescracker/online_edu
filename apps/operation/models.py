@@ -57,7 +57,7 @@ class UserFavorite(models.Model):
 
 class UserMessage(models.Model):
     user_id = models.IntegerField(default=0, verbose_name=u"user who receive message") # 0 means all users
-    message = models.CharField(max_length=10, verbose_name=u"message")
+    message = models.CharField(max_length=50, verbose_name=u"message")
     has_read = models.BooleanField(default=False, verbose_name=u"whether user read the message")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"time of added")
 
@@ -66,7 +66,7 @@ class UserMessage(models.Model):
         verbose_name_plural = verbose_name
 
     def __unicode__(self):
-        return self.user_id
+        return 'User Id is {}'.format(self.user_id)
 
 
 class UserCourse(models.Model):

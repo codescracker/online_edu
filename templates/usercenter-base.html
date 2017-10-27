@@ -12,6 +12,7 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'js/plugins/queryCity/css/cityLayout.css' %}">
 
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/lq.datetimepick.css' %}"/>
     {% block custom_css %}{% endblock %}
 
@@ -84,7 +85,7 @@
                 <div class="nav">
                     <div class="wp">
                         <ul>
-                            <li class="active"><a href="index.html">首页</a></li>
+                            <li class="active"><a href="{% url 'index' %}">首页</a></li>
                             <li>
                                 <a href="{% url 'course:course_list' %}">
                                     公开课<img class="hot" src="{% static 'images/nav_hot.png' %}">
@@ -114,11 +115,11 @@
 	<div class="wp list personal_list">
 	<div class="left">
         <ul>
-            <li class="active2"><a href="usercenter-info.html">个人资料</a></li>
-            <li ><a href="usercenter-mycourse.html">我的课程</a></li>
-            <li ><a href="usercenter-fav-course.html">我的收藏</a></li>
-            <li >
-                <a href="usercenter-message.html" style="position: relative;">
+            <li {% ifequal request.path '/users/info/' %}class="active2" {% endifequal %}><a href="{% url 'users:user_info' %}">个人资料</a></li>
+            <li {% ifequal request.path '/users/my_course/' %}class="active2" {% endifequal %}><a href="{% url 'users:my_courses' %}">我的课程</a></li>
+            <li {% ifequal request.path '/users/fav/orgs/' %}class="active2" {% endifequal %}><a href="{% url 'users:my_fav_orgs' %}">我的收藏</a></li>
+            <li {% ifequal request.path '/users/messages/' %}class="active2" {% endifequal %}>
+                <a href="{% url 'users:my_msg' %}" style="position: relative;">
                     我的消息
                 </a>
             </li>
@@ -193,7 +194,7 @@
     </div>
     <div class="dialogbox changeemai1 changephone" id="jsChangeEmailDialog">
         <h1>修改邮箱</h1>
-        <div class="close jsCloseDialog"><img src="../images/dig_close.png"/></div>
+        <div class="close jsCloseDialog"><img src="{% static 'images/dig_close.png' %}"/></div>
         <p>请输入新的邮箱地址</p>
         <form id="jsChangeEmailForm" autocomplete="off">
             <div class="box">
@@ -207,8 +208,9 @@
             <div class="button">
                 <input class="changeemai_btn" id="jsChangeEmailBtn" type="button" value="完成"/>
             </div>
-            <input type='hidden' name='csrfmiddlewaretoken' value='DaP7IUKm9FA9nELA9YUlYYWpyIDdCiIP' />
-        <input type='hidden' name='csrfmiddlewaretoken' value='799Y6iPeEDNSGvrTu3noBrO4MBLv6enY' />
+{#            <input type='hidden' name='csrfmiddlewaretoken' value='DaP7IUKm9FA9nELA9YUlYYWpyIDdCiIP' />#}
+{#        <input type='hidden' name='csrfmiddlewaretoken' value='799Y6iPeEDNSGvrTu3noBrO4MBLv6enY' />#}
+            {% csrf_token %}
         </form>
     </div>
 
@@ -302,7 +304,7 @@
                 data: {
                     fav_type: 1,
                     fav_id: favid,
-                    csrfmiddlewaretoken: '799Y6iPeEDNSGvrTu3noBrO4MBLv6enY'
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 async: true,
                 success: function(data) {
@@ -321,7 +323,7 @@
                     data: {
                         fav_type: 3,
                         fav_id: favid,
-                        csrfmiddlewaretoken: '799Y6iPeEDNSGvrTu3noBrO4MBLv6enY'
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     async: true,
                     success: function(data) {
@@ -341,7 +343,7 @@
                     data: {
                         fav_type: 2,
                         fav_id: favid,
-                        csrfmiddlewaretoken: '799Y6iPeEDNSGvrTu3noBrO4MBLv6enY'
+                        csrfmiddlewaretoken: '{{ csrf_token }}'
                     },
                     async: true,
                     success: function(data) {

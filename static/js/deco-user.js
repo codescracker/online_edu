@@ -20,6 +20,7 @@ function sendCodeChangeEmail($btn){
             $btn.attr('disabled',true);
         },
         success: function(data){
+            console.log(data)
             if(data.email){
                 Dml.fun.showValidateError($('#jsChangeEmail'), data.email);
             }else if(data.status == 'success'){
