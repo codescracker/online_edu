@@ -7,6 +7,7 @@ from django.db.models import Q
 from .models import Organizition, City, Teacher
 from .forms import UserAskForm
 from operation.models import UserFavorite
+from courses.models import Course
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
@@ -80,6 +81,9 @@ class UserAskView(View):
 class OrgDetailHomeView(View):
     def get(self, request, org_id):
         org = Organizition.objects.get(id=int(org_id))
+        org.click_nums += 1
+        org.save()
+
         has_save = False
         if request.user.is_authenticated() and UserFavorite.objects.filter(user=request.user, fav_id=org.id,
                                                                            fav_type=2):
@@ -145,6 +149,24 @@ class UserFavView(View):
             exist_record = UserFavorite.objects.filter(user=user_id, fav_id=fav_id, fav_type=fav_type)
             if exist_record:
                 exist_record.delete()
+                if fav_type == 1:
+                    course = Course.objects.get(id=fav_id)
+                    course.like_nums -= 1
+                    if course.like_nums < 0:
+                        course.like_nums = 0
+                    course.save()
+                if fav_type == 2:
+                    org = Organizition.objects.get(id=fav_id)
+                    org.like_nums -= 1
+                    if org.like_nums < 0:
+                        org.like_nums = 0
+                    org.save()
+                if fav_type == 3:
+                    teacher = Teacher.objects.get(id=fav_id)
+                    teacher.like_nums -= 1
+                    if teacher.like_nums < 0:
+                        teacher.like_nums = 0
+                    teacher.save()
 
                 response_data = dict()
                 response_data['status'] = 'success'
@@ -157,6 +179,19 @@ class UserFavView(View):
                     user_fav.fav_id = fav_id
                     user_fav.fav_type = fav_type
                     user_fav.save()
+
+                    if fav_type == 1:
+                        course = Course.objects.get(id=fav_id)
+                        course.like_nums += 1
+                        course.save()
+                    if fav_type == 2:
+                        org = Organizition.objects.get(id=fav_id)
+                        org.like_nums += 1
+                        org.save()
+                    if fav_type == 3:
+                        teacher = Teacher.objects.get(id=fav_id)
+                        teacher.like_nums += 1
+                        teacher.save()
 
                     response_data = dict()
                     response_data['status'] = 'success'

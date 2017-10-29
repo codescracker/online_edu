@@ -80,6 +80,8 @@ class CourseInfoView(View):
             return render(request, 'login.html')
 
         course = Course.objects.get(id=int(course_id))
+        course.students += 1
+        course.save()
 
         user_courses = UserCourse.objects.filter(user=request.user, course=course)
         if not user_courses:
@@ -170,4 +172,5 @@ class AddCourseCommentsView(View):
                 response_data['msg'] = 'save error'
 
                 return HttpResponse(json.dumps(response_data), content_type='application/json')
+
 

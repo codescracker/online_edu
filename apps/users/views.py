@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from .models import UserProfile, EmailVerifyRecord
 from .forms import LoginForm, RegisterForm, ForgetPsdForm, ResetpwdForm, ImageForm, UserInfoForm
@@ -12,6 +13,7 @@ from utls.email_send import send_register_email
 from operation.models import UserCourse, UserFavorite, UserMessage
 from organizations.models import Organizition, Teacher
 from courses.models import Course
+from users.models import Banner
 
 from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 import json
@@ -142,29 +144,37 @@ class LoginView(View):
             if user:
                 if user.is_active:
                     login(request, user)
-                    return render(request, 'index.html')
+                    return HttpResponseRedirect(reverse('index'))
                 else:
-                    return render(request, 'login.html', {'msg': 'user is not activated yet'})
+                    return render(request, 'login.html', {'msg': 'user is not activated yet', 'login_form': login_form})
             else:
-                return render(request, "login.html", {'msg': "Username/email or password is incorrect"})
+                return render(request, "login.html",
+                              {'msg': "Username/email or password is incorrect", 'login_form': login_form})
         else:
             return render(request, "login.html", {'login_form': login_form})
 
+#### function style view ####
+# def user_login(request):
+#     if request.method == "POST":
+#         user_name = request.POST.get("username", "")
+#         pass_word = request.POST.get("password", "")
+#
+#         user = authenticate(username=user_name, password=pass_word)
+#         if user:
+#             login(request, user)
+#             return render(request, 'index.html')
+#         else:
+#             return render(request, "login.html", {'msg': "Username/email or password is incorrect"})
+#
+#     elif request.method == "GET":
+#         return render(request, "login.html", {})
 
-def user_login(request):
-    if request.method == "POST":
-        user_name = request.POST.get("username", "")
-        pass_word = request.POST.get("password", "")
 
-        user = authenticate(username=user_name, password=pass_word)
-        if user:
-            login(request, user)
-            return render(request, 'index.html')
-        else:
-            return render(request, "login.html", {'msg': "Username/email or password is incorrect"})
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
 
-    elif request.method == "GET":
-        return render(request, "login.html", {})
+        return HttpResponseRedirect(reverse('index'))
 
 
 class UserInfoView(View):
@@ -328,7 +338,13 @@ class MyFavCourseView(View):
 class MyMsgView(View):
     def get(self, request):
         user_id = request.user.id
-        all_msgs = UserMessage.objects.filter(user_id=user_id, has_read=False)
+
+        all_msgs = UserMessage.objects.filter(user_id=user_id)
+        all_unread_msgs = UserMessage.objects.filter(user_id=user_id, has_read=False)
+
+        for unread_msg in all_unread_msgs:
+            unread_msg.has_read = True
+            unread_msg.save()
 
         try:
             page = request.GET.get('page', 1)
@@ -344,3 +360,36 @@ class MyMsgView(View):
 
         return render(request, 'usercenter-message.html', data)
 
+
+class IndexView(View):
+    def get(self, request):
+        all_banner_images = Banner.objects.all().order_by('index')
+
+        all_courses = Course.objects.all()
+
+        courses_banners = all_courses.filter(is_banner=True)[:3]
+        courses_notbanners = all_courses.filter(is_banner=False)[:6]
+
+        all_orgs = Organizition.objects.all().order_by('-click_nums')[:12]
+
+        data = dict()
+        data['all_banner_images'] = all_banner_images
+        data['courses_banners'] = courses_banners
+        data['courses_notbanners'] = courses_notbanners
+        data['all_orgs'] = all_orgs
+
+        return render(request, 'index.html', data)
+
+
+def page_not_found(request):
+    from django.shortcuts import render_to_response
+    response = render_to_response('404.html', {})
+    response.status_code = 404
+    return response
+
+
+def page_error(request):
+    from django.shortcuts import render_to_response
+    response = render_to_response('500.html', {})
+    response.status_code = 500
+    return response

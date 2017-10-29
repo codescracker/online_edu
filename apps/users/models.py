@@ -22,6 +22,10 @@ class UserProfile(AbstractUser):
     def __unicode__(self):
         return self.username
 
+    def unread_msg_nums(self):
+        from operation.models import UserMessage
+        return UserMessage.objects.filter(user_id=self.id, has_read=False).count()
+
 
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=20, verbose_name=u"verification code")

@@ -32,6 +32,7 @@ class Course(models.Model):
     teacher = models.ForeignKey(Teacher, blank=True, null= True, verbose_name= 'course related teacher')
     prequist = models.CharField(default='', max_length=50, verbose_name='preqrust for the course')
     goal =  models.CharField(default='', max_length=50, verbose_name='goal of the course')
+    is_banner = models.BooleanField(default=False, verbose_name='whether the course will be in banner')
 
     class Meta:
         verbose_name = u"courses"
