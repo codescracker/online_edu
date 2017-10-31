@@ -22,7 +22,7 @@ import xadmin
 from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ActiveResetView, PassWordResetView
 from users.views import LogoutView, IndexView
 from organizations.views import OrgView
-from settings import MEDIA_ROOT, STATIC_ROOT
+from settings import MEDIA_ROOT
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
@@ -41,7 +41,7 @@ urlpatterns = [
 
     url(r'^media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
 
-    url(r'static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
+    # url(r'static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}),
     # url(r'^org-list/$', OrgView.as_view(), name='org_list'),
 
     # ulrs for the organization app
