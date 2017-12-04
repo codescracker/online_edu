@@ -94,8 +94,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'online_edu',
         'USER': 'root',
-        'PASSWORD': '690712',
-        'HOST': 'localhost',
+        'PASSWORD': 'Zuoqian690712',
+        'HOST': 'spider.c0kwpumescj5.us-east-1.rds.amazonaws.com',
     },
 
 
