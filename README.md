@@ -21,6 +21,8 @@ Snapshots of the project
 **3. Course Page:**
 ![](./snapshot/course_0.png)
 ![](./snapshot/course_1.png)
+![](./snapshot/course_2.png)
+
 **4. Teacher Page:**
 ![](./snapshot/teacher_0.png)
 ![](./snapshot/teacher_1.png)
